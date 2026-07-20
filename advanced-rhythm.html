@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Rhythm — Advanced Pronunciation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#06091a;overflow:hidden;height:100vh;width:100vw}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column}
+#progress{position:fixed;top:0;left:0;height:5px;background:linear-gradient(90deg,#F57F17,#FFD54F);z-index:99;transition:width .3s ease;border-radius:0 3px 3px 0}
+#slides{flex:1;position:relative;overflow:hidden;min-height:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column}
+.slide.active{display:flex}
+
+/* NAV */
+#nav{height:48px;background:#060714;display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.08)}
+#nav button{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:13px;padding:6px 20px;border-radius:20px;cursor:pointer;transition:background .2s;font-family:inherit;letter-spacing:.3px}
+#nav button:hover{background:rgba(255,255,255,.22)}
+#nav button:disabled{opacity:.25;cursor:default}
+#counter{color:rgba(255,255,255,.45);font-size:12px;min-width:60px;text-align:center}
+
+/* SHARED */
+.s-head{padding:12px 30px;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px;flex-shrink:0;letter-spacing:.2px}
+.badge{background:rgba(255,255,255,.16);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600}
+.s-body{flex:1;display:flex;padding:0 26px 12px;gap:22px;min-height:0;overflow:hidden}
+.student-badge{background:#F57F17;color:#fff;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;flex-shrink:0}
+.dum{color:#F57F17;font-weight:900}
+
+/* BEAT BOXES */
+.beat-da{display:inline-block;background:#e0e0e0;color:#666;border-radius:6px;padding:2px 7px;font-size:clamp(10px,1.1vw,13px);font-weight:600;margin:1px}
+.beat-dum{display:inline-block;background:#F57F17;color:#fff;border-radius:6px;padding:3px 10px;font-size:clamp(12px,1.3vw,16px);font-weight:900;margin:1px}
+.beat-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+
+/* TITLE */
+.title-slide{background:linear-gradient(140deg,#06091a 0%,#1f1100 55%,#06091a 100%);align-items:center;justify-content:center;text-align:center}
+.title-slide h1{font-size:clamp(30px,5vw,66px);font-weight:900;color:#fff;line-height:1;letter-spacing:-2px}
+.title-slide h1 em{font-style:normal;background:linear-gradient(90deg,#F57F17,#FFD54F);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.title-sub{font-size:clamp(13px,1.7vw,19px);color:rgba(255,255,255,.6);margin-top:12px}
+.goal-box{margin-top:22px;background:rgba(245,127,23,.09);border:1.5px solid rgba(245,127,23,.35);border-radius:16px;padding:16px 28px;display:inline-block;text-align:left}
+.goal-box p{color:#FFE0B2;font-size:clamp(13px,1.5vw,17px);line-height:1.75}
+.adv-badge{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 16px;font-size:clamp(11px,1.2vw,13px);color:rgba(255,255,255,.5);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase}
+
+/* WARM-UP */
+.warmup-slide{background:#fff;flex-direction:column}
+.warmup-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 40px;gap:18px}
+.warmup-prompt{background:#FFF8E1;border-left:5px solid #F57F17;border-radius:0 14px 14px 0;padding:18px 26px;font-size:clamp(14px,1.8vw,20px);font-weight:600;color:#E65100;max-width:820px;width:100%;line-height:1.5}
+.warmup-pairs{display:flex;gap:16px;max-width:820px;width:100%}
+.warmup-pair{border-radius:14px;padding:14px 20px;flex:1;text-align:center;border:2px solid}
+.wp-jp{font-size:clamp(16px,2.2vw,26px);font-weight:900;letter-spacing:4px}
+.wp-en{font-size:clamp(18px,2.5vw,30px);font-weight:900}
+.wp-label{font-size:clamp(10px,1.1vw,12px);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:4px;opacity:.7}
+.warmup-q{background:#F5F5F5;border-radius:10px;padding:10px 16px;font-size:clamp(12px,1.4vw,15px);color:#555;border:1.5px solid #e0e0e0;max-width:820px;width:100%}
+.teacher-note{background:#FFF3E0;border:1px solid #FFB74D;border-radius:10px;padding:10px 18px;font-size:clamp(11px,1.25vw,14px);color:#E65100;max-width:820px;width:100%;line-height:1.6}
+
+/* KEY CONCEPT */
+.concept-slide{background:#fff;flex-direction:column}
+.concept-body{flex:1;display:flex;flex-direction:column;gap:14px;padding:14px 26px;min-height:0}
+.concept-cols{display:flex;gap:18px;flex:1;min-height:0}
+.concept-col{border-radius:14px;padding:16px 20px;flex:1;display:flex;flex-direction:column;gap:10px}
+.cc-num{font-size:clamp(26px,4vw,48px);font-weight:900;line-height:1}
+.cc-title{font-size:clamp(14px,1.6vw,20px);font-weight:900;margin-bottom:2px}
+.cc-body{font-size:clamp(12px,1.3vw,14px);line-height:1.65;color:#444}
+.cc-beats{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.cc-beat-row{display:flex;align-items:center;gap:8px}
+.cc-beat-label{font-size:clamp(11px,1.2vw,13px);color:#888;min-width:80px;font-style:italic}
+.concept-rule{background:#FFF8E1;border-radius:12px;padding:11px 18px;font-size:clamp(12px,1.3vw,15px);color:#E65100;font-weight:600;text-align:center;flex-shrink:0}
+
+/* SPOT IT */
+.spot-slide{background:#f8f9fa;flex-direction:column}
+.spot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;overflow-y:auto}
+.spot-box{background:#fff;border-radius:12px;padding:12px 16px;border:1.5px solid #e0e0e0;display:flex;flex-direction:column;gap:6px}
+.spot-sent{font-size:clamp(14px,1.7vw,20px);font-weight:700;color:#222;padding:6px 0}
+.spot-reveal-btn{align-self:flex-start;background:#F57F17;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:background .2s}
+.spot-reveal-btn:hover{background:#E65100}
+.spot-ans{display:none;background:#FFF8E1;border-radius:8px;padding:10px 12px;display:none;flex-direction:column;gap:6px}
+.spot-ans.open{display:flex}
+.spot-hint{font-size:clamp(10px,1.1vw,12px);color:#888;line-height:1.5}
+
+/* TRY IT */
+.tryit-slide{background:#f8f9fa;flex-direction:column}
+.tryit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;overflow-y:auto}
+.tryit-card{background:#fff;border-radius:12px;padding:12px 16px;border:1.5px solid #e0e0e0;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.tryit-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#F57F17;opacity:.7}
+.tryit-sent{font-size:clamp(14px,1.7vw,20px);color:#222;line-height:1.6;font-weight:600}
+.tryit-note{font-size:clamp(10px,1.1vw,12px);color:#888;font-style:italic}
+
+/* TRY IT #2 — JP vs EN */
+.jpvs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;overflow-y:auto}
+.jpvs-card{background:#fff;border-radius:12px;padding:14px 18px;border:1.5px solid #e0e0e0;display:flex;flex-direction:column;gap:8px}
+.jpvs-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#F57F17;opacity:.7}
+.jpvs-row{display:flex;align-items:center;gap:10px}
+.jpvs-lang{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;min-width:24px;opacity:.6}
+.jpvs-jp{font-size:clamp(16px,2vw,24px);font-weight:700;letter-spacing:6px;color:#555}
+.jpvs-jp-note{font-size:clamp(10px,1.1vw,12px);color:#aaa}
+.jpvs-en-word{font-size:clamp(18px,2.2vw,28px);font-weight:900;color:#222}
+.jpvs-beats{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:2px}
+.jpvs-tip{font-size:clamp(10px,1.1vw,12px);color:#F57F17;font-style:italic}
+
+/* ROLE-PLAY */
+.roleplay-slide{background:#1a0f00;flex-direction:column}
+.rp-body{flex:1;display:flex;flex-direction:column;gap:10px;padding:12px 26px 12px;min-height:0;overflow:hidden}
+.rp-scenario{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 18px;font-size:clamp(12px,1.3vw,14px);color:rgba(255,255,255,.75);flex-shrink:0;line-height:1.5}
+.rp-cols{display:grid;grid-template-columns:3fr 2fr;gap:14px;flex:1;min-height:0;overflow:hidden}
+.rp-col{background:rgba(255,255,255,.04);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:5px;overflow-y:auto}
+.rp-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;flex-shrink:0;color:#FFB74D}
+.rp-line{padding:5px 8px;border-radius:8px;display:flex;flex-direction:column;gap:2px}
+.rp-line.teacher{background:rgba(255,255,255,.04)}
+.rp-line.student{background:rgba(245,127,23,.2);border:1px solid rgba(245,127,23,.35)}
+.rp-speaker{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.5}
+.rp-text{font-size:clamp(11px,1.35vw,14px);color:#fff;line-height:1.5}
+.rp-text .dum{color:#FFB74D}
+.rp-tip{background:rgba(245,127,23,.12);border:1px solid rgba(245,127,23,.3);border-radius:10px;padding:8px 14px;font-size:clamp(11px,1.2vw,13px);color:#FFB74D;flex-shrink:0}
+.rp-tips-list{display:flex;flex-direction:column;gap:8px;font-size:clamp(11px,1.25vw,13px);color:rgba(255,255,255,.7)}
+
+/* BUILD IT */
+.build-slide{background:#fff;flex-direction:column}
+.build-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 40px;gap:16px;overflow-y:auto}
+.build-prompt{background:#FFF8E1;border-radius:14px;padding:18px 26px;max-width:760px;width:100%;text-align:center}
+.build-prompt h2{font-size:clamp(15px,1.9vw,22px);font-weight:800;color:#E65100;margin-bottom:8px}
+.build-prompt p{font-size:clamp(12px,1.4vw,16px);color:#F57F17;line-height:1.6}
+.build-steps{display:flex;gap:14px;max-width:760px;width:100%}
+.build-step{border-radius:12px;padding:14px 18px;flex:1;text-align:center;border:1.5px solid}
+.build-step-num{font-size:clamp(22px,3vw,36px);font-weight:900;line-height:1}
+.build-step-title{font-size:clamp(12px,1.3vw,15px);font-weight:700;margin-top:4px}
+.build-step-ex{font-size:clamp(10px,1.1vw,12px);color:#555;margin-top:6px;line-height:1.5}
+
+/* QUIZ */
+.quizq-slide{background:#f8f9fa;flex-direction:column}
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 14px;width:100%}
+.q-box{background:#fff;border-radius:12px;padding:12px 16px;border:1.5px solid #e0e0e0;display:flex;flex-direction:column;gap:5px}
+.q-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#F57F17;opacity:.8}
+.q-text{font-size:clamp(12px,1.3vw,15px);font-weight:600;color:#222;line-height:1.45}
+.q-opts{display:flex;flex-direction:column;gap:3px}
+.q-opt{font-size:clamp(11px,1.15vw,13px);color:#555;padding:2px 0;line-height:1.4}
+.q-reveal-btn{align-self:flex-start;background:#F57F17;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:2px}
+.q-reveal-btn:hover{background:#E65100}
+.q-ans-reveal{display:none;background:#FFF8E1;border-radius:8px;padding:8px 12px;margin-top:4px}
+.q-ans-reveal.open{display:block}
+.qr-opts{display:flex;flex-direction:column;gap:3px;margin-bottom:5px}
+.qr-opt{font-size:clamp(11px,1.15vw,13px);color:#555;padding:2px 6px;border-radius:5px}
+.qr-opt.correct{background:#F57F17;color:#fff;font-weight:700}
+.qr-hint{font-size:clamp(10px,1.1vw,12px);color:#E65100;line-height:1.5}
+.think-banner{background:#FFF8E1;border-radius:10px;padding:8px 16px;font-size:clamp(12px,1.3vw,14px);color:#E65100;font-weight:600;flex-shrink:0}
+
+/* SUMMARY */
+.summary-slide{background:linear-gradient(140deg,#06091a 0%,#1f1100 55%,#06091a 100%);flex-direction:column}
+.sum-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.sum-card{border-radius:16px;padding:20px 22px;min-width:180px;max-width:260px;flex:1}
+.sum-card-icon{font-size:clamp(26px,3.5vw,42px);margin-bottom:8px}
+.sum-card-title{font-size:clamp(13px,1.5vw,18px);font-weight:800;color:#fff;margin-bottom:6px;line-height:1.3}
+.sum-card-body{font-size:clamp(11px,1.2vw,13px);color:rgba(255,255,255,.7);line-height:1.5}
+.sum-foot{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 22px;font-size:clamp(12px,1.3vw,14px);color:rgba(255,255,255,.6);text-align:center;max-width:720px}
+
+/* FREE CONV */
+.freeconv-slide{background:#1a0f00;flex-direction:column}
+.fc-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 40px;gap:14px}
+.fc-badge{background:rgba(245,127,23,.3);border:1px solid rgba(245,127,23,.5);border-radius:20px;padding:4px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#FFB74D}
+.fc-topic{font-size:clamp(22px,3.5vw,46px);font-weight:900;color:#fff;letter-spacing:-1px}
+.fc-questions{display:flex;flex-direction:column;gap:8px;width:100%;max-width:720px}
+.fc-q{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 16px;font-size:clamp(13px,1.5vw,16px);color:rgba(255,255,255,.8);line-height:1.55}
+.fc-note{font-size:clamp(11px,1.2vw,13px);color:rgba(255,255,255,.4);text-align:center;max-width:680px;line-height:1.6}
+.fc-teacher{background:rgba(245,127,23,.1);border:1px solid rgba(245,127,23,.25);border-radius:10px;padding:10px 16px;font-size:clamp(11px,1.2vw,13px);color:#FFB74D;max-width:720px;width:100%;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="progress"></div>
+  <div id="slides"></div>
+  <div id="nav">
+    <button id="prevBtn" onclick="move(-1)">◀ Back</button>
+    <span id="counter"></span>
+    <button id="nextBtn" onclick="move(1)">Next ▶</button>
+  </div>
+</div>
+<script>
+// ═══════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════
+const da  = `<span class="beat-da">da</span>`;
+const DUM = `<span class="beat-dum">DUM</span>`;
+
+const SPOT = [
+  {sent:'Cats eat fish.',
+   pattern:`${DUM} ${da} ${DUM}`,
+   hint:'2 beats. "eat" is a content verb — stressed. "Cats" and "fish" are nouns — also stressed. No unstressed syllables between them!'},
+  {sent:'She bought a new car.',
+   pattern:`${da} ${DUM} ${da} ${DUM} ${DUM}`,
+   hint:'3 beats in 5 syllables. "she" and "a" are weak. "BOUGHT", "NEW", "CAR" carry the rhythm.'},
+  {sent:'I want to go to school.',
+   pattern:`${da} ${DUM} ${da} ${DUM} ${da} ${DUM}`,
+   hint:'3 beats. "to" appears twice but both are weak — the stress jumps between content words: WANT, GO, SCHOOL.'},
+  {sent:"The weather's been really cold.",
+   pattern:`${da} ${DUM} ${da} ${DUM} ${da} ${DUM}`,
+   hint:'3 beats. "The" and "been" are weak. The rhythm lands on: WEATH-, REAL-, COLD.'},
+  {sent:'Can you give me some water?',
+   pattern:`${da} ${da} ${DUM} ${da} ${da} ${DUM} ${da}`,
+   hint:'2 beats. "can", "you", "me", "some" all fade. The rhythm lands on: GIVE, WA-(ter).'},
+  {sent:"She's planning a trip to Japan.",
+   pattern:`${da} ${DUM} ${da} ${da} ${DUM} ${da} ${DUM}`,
+   hint:'3 beats: PLAN-, TRIP, -PAN. The syllables between get squeezed into the gaps.'},
+];
+
+const TRY1 = [
+  {sent:'<span class="dum">CATS</span> eat <span class="dum">FISH</span>.',                                        note:'DUM – da – DUM'},
+  {sent:'I <span class="dum">WENT</span> to the <span class="dum">STORE</span>.',                                  note:'da – DUM – da – da – DUM'},
+  {sent:'She <span class="dum">BOUGHT</span> a <span class="dum">NEW</span> <span class="dum">CAR</span>.',         note:'da – DUM – da – DUM – DUM'},
+  {sent:'Can you <span class="dum">GIVE</span> me some <span class="dum">WA</span>ter?',                           note:'da – da – DUM – da – da – DUM–da'},
+  {sent:'The <span class="dum">WEATH</span>er\'s been <span class="dum">REAL</span>ly <span class="dum">COLD</span>.',note:'da–DUM–da–da – DUM–da – DUM'},
+  {sent:'I <span class="dum">NEED</span> a <span class="dum">NEW</span> <span class="dum">PHONE</span> — mine <span class="dum">BROKE</span>.',note:'da–DUM–da–DUM–DUM – DUM–DUM'},
+  {sent:'She\'s <span class="dum">PLAN</span>ning a <span class="dum">TRIP</span> to Ja<span class="dum">-PAN</span>.',note:'da–DUM–da–da–DUM–da–DUM'},
+  {sent:'Can you <span class="dum">SEND</span> me the <span class="dum">FILE</span> by Fri<span class="dum">-DAY</span>?',note:'da–da–DUM–da–da–DUM–da–DUM'},
+];
+
+const TRY2 = [
+  {strong:'I want TO go TO the STORE.',
+   natural:'I want <em>tə</em> go <em>tə</em> the STORE.',
+   weak:'to → /tə/',
+   tip:'Say "tə" quickly — never a full /tuː/ in the middle of a sentence.'},
+  {strong:'She IS a BIG FAN OF FASHION.',
+   natural:'She\'s <em>ə</em> BIG FAN <em>əv</em> FASHION.',
+   weak:'a → /ə/ · of → /əv/',
+   tip:'"a" is almost never /eɪ/ in normal speech. It glides into /ə/ — very short.'},
+  {strong:'I DID IT FOR YOU AND HIM.',
+   natural:'I DID it <em>fə</em> you <em>ən</em> him.',
+   weak:'for → /fə/ · and → /ən/',
+   tip:'"and" sounds like "un" — the /æ/ disappears completely at normal speed.'},
+  {strong:'I CAN DO IT IF YOU CAN.',
+   natural:'I <em>kən</em> DO it if you CAN.',
+   weak:'can (mid) → /kən/ · can (final) → /kæn/ ← stressed!',
+   tip:'Mid-sentence "can" = weak /kən/. At the end (or emphatic) = strong /kæn/. Notice the difference!'},
+  {strong:'GIVE ME THE KEY AND THE MAP.',
+   natural:'GIVE me <em>ðə</em> KEY <em>ən</em> <em>ðə</em> MAP.',
+   weak:'the → /ðə/ · and → /ən/',
+   tip:'"the" before a consonant = /ðə/. Only before a vowel does it become /ðiː/ ("the apple").'},
+  {strong:'HAVE YOU BEEN TO THE NEW PLACE?',
+   natural:'<em>həv</em> you BEEN <em>tə</em> <em>ðə</em> NEW PLACE?',
+   weak:'have → /həv/ · to → /tə/ · the → /ðə/',
+   tip:'3 weak forms in one sentence! Chain them together quickly and the stressed beats really pop out.'},
+];
+
+const ROLEPLAY = [
+  {role:'teacher',label:'Teacher',text:'"Good evening. Welcome to the news."'},
+  {role:'student',label:'Student',text:'Good <span class="dum">EVE</span>ning. <span class="dum">WEL</span>come to the <span class="dum">NEWS</span>.'},
+  {role:'teacher',label:'Teacher',text:'"The weather will be sunny and warm today."'},
+  {role:'student',label:'Student',text:'The <span class="dum">WEATH</span>er will be <span class="dum">SUN</span>ny and <span class="dum">WARM</span> to<span class="dum">-DAY</span>.'},
+  {role:'teacher',label:'Teacher',text:'"Thousands of people gathered in the square."'},
+  {role:'student',label:'Student',text:'<span class="dum">THOU</span>sands of <span class="dum">PEO</span>ple <span class="dum">GATH</span>ered in the <span class="dum">SQUARE</span>.'},
+  {role:'teacher',label:'Teacher',text:'"The prime minister announced a new plan."'},
+  {role:'student',label:'Student',text:'The <span class="dum">PRIME</span> <span class="dum">MIN</span>ister a<span class="dum">-NOUNCED</span> a <span class="dum">NEW</span> <span class="dum">PLAN</span>.'},
+  {role:'teacher',label:'Teacher',text:'"Stocks are up, and the market is strong."'},
+  {role:'student',label:'Student',text:'<span class="dum">STOCKS</span> are <span class="dum">UP</span>, and the <span class="dum">MAR</span>ket is <span class="dum">STRONG</span>.'},
+];
+
+const QUIZ = [
+  {q:'Japanese is ___-timed; English is ___-timed.',
+   opts:['a) beat / mora','b) mora / stress','c) pitch / tone','d) stress / mora'],
+   ans:1,hint:'Japanese gives each mora (sound unit) equal time — mora-timed. English spaces the STRESSED syllables evenly and squeezes everything in between — stress-timed.'},
+  {q:'In "computer", which syllable is stressed?',
+   opts:['a) COM','b) PU','c) TER','d) All are equal'],
+   ans:1,hint:'com-PU-ter — the middle syllable is stressed. This is why "コンピューター" (5 equal beats) sounds so different from English "computer" (da-DUM-da).'},
+  {q:'What happens to unstressed syllables in English?',
+   opts:['a) They get louder','b) They become longer','c) They get squeezed and weakened','d) They disappear completely'],
+   ans:2,hint:'Unstressed syllables are compressed — shorter, quieter, and often reduced to /ə/ (schwa). They get squeezed into the gaps between stressed beats.'},
+  {q:'"クリスマス" has 5 beats. "Christmas" has:',
+   opts:['a) 5 beats','b) 4 beats','c) 3 beats','d) 2 beats'],
+   ans:3,hint:'"Christmas" = CHRIST-mas — just 2 syllables, 1 strong beat. The 5 Japanese morae compress dramatically into the English stress-timed pattern.'},
+  {q:'Which sentence has the most natural English rhythm?',
+   opts:['a) "I WANT TO GO TO THE store"','b) "i want to GO to the STORE"','c) "I WANT to go to the STORE"','d) "I want to go to the store" (flat)'],
+   ans:2,hint:'"I WANT to go to the STORE" — content words (WANT, STORE) carry the stress. Function words (I, to, the) stay light. This creates the natural da-DUM-da-da-da-DUM pattern.'},
+  {q:'The pattern DUM–da–da matches:',
+   opts:['a) ba-NA-na','b) com-PU-ter','c) CHOC-o-late','d) in-for-MA-tion'],
+   ans:2,hint:'"CHOC-o-late" = DUM–da–da. "Banana" = da-DUM-da. "Computer" = da-DUM-da. "Information" = da-da-DUM-da. Chocolate is the only DUM-first 3-syllable word here.'},
+];
+
+// ═══════════════════════════════════════════
+//  BUILDERS
+// ═══════════════════════════════════════════
+function titleHTML(){
+  return `<div class="slide title-slide">
+  <div style="max-width:820px;padding:18px;text-align:center">
+    <div class="adv-badge">Advanced Pronunciation</div>
+    <h1><em>English Rhythm</em></h1>
+    <div style="font-size:clamp(16px,2.5vw,28px);font-weight:700;color:rgba(255,255,255,.45);margin-top:4px">（英語のリズム）</div>
+    <p class="title-sub">英語は<strong style="color:#FFD54F">波乗り言語</strong> — 強拍に乗って、弱い音を波間に流す</p>
+    <div class="goal-box">
+      <p>🎯 <strong>Today's Goal:</strong> Understand stress-timed rhythm and produce natural English with the right beats</p>
+      <p style="margin-top:4px">⏱ 45 minutes &nbsp;·&nbsp; 11 slides &nbsp;·&nbsp; Use ◀ ▶ or arrow keys to navigate</p>
+    </div>
+  </div></div>`;
+}
+
+function warmupHTML(){
+  return `<div class="slide warmup-slide">
+  <div class="s-head" style="background:#F57F17">Warm-Up <span class="badge">You first! 🗣️</span> <span class="student-badge">Student · 3 min</span></div>
+  <div class="warmup-body">
+    <div class="warmup-prompt">Say each pair aloud and count the beats by tapping your hand:</div>
+    <div class="warmup-pairs">
+      <div class="warmup-pair" style="background:#FFF8E1;border-color:#FFB74D">
+        <div class="wp-jp">ク・リ・ス・マ・ス</div>
+        <div class="wp-label" style="color:#F57F17">Japanese — 5 beats</div>
+        <div style="font-size:28px;margin:8px 0">→</div>
+        <div class="wp-en">Christ<span style="color:#F57F17">-</span>mas</div>
+        <div class="wp-label" style="color:#888">English — ? beats</div>
+      </div>
+      <div class="warmup-pair" style="background:#FFF8E1;border-color:#FFB74D">
+        <div class="wp-jp">コ・ン・ピュー・タ・ー</div>
+        <div class="wp-label" style="color:#F57F17">Japanese — 5 beats</div>
+        <div style="font-size:28px;margin:8px 0">→</div>
+        <div class="wp-en">com<span style="color:#F57F17">-PU-</span>ter</div>
+        <div class="wp-label" style="color:#888">English — ? beats</div>
+      </div>
+    </div>
+    <div class="warmup-q">💬 Did you tap the same number of times for the Japanese and English versions? What surprised you?</div>
+    <div class="teacher-note">📝 <strong>Teacher note:</strong> Let the student count freely. Many will tap 5 times for "クリスマス" and then struggle with "Christmas". This contrast is the core of today's lesson.</div>
+  </div></div>`;
+}
+
+function conceptHTML(){
+  return `<div class="slide concept-slide">
+  <div class="s-head" style="background:#F57F17">Key Concept — Stress-Timed vs Mora-Timed <span class="badge">Teacher · 2 min</span></div>
+  <div class="concept-body">
+    <div class="concept-cols">
+      <div class="concept-col" style="background:#FFF8E1;border:2px solid rgba(245,127,23,.25)">
+        <div class="cc-num" style="color:#F57F17">🇯🇵</div>
+        <div class="cc-title" style="color:#E65100">Japanese: Mora-Timed（モーラ拍）</div>
+        <div class="cc-body">Every mora takes <strong>equal time</strong>. No beat is heavier than another. Rhythm is flat and even — like a steady drum machine.</div>
+        <div class="cc-beats">
+          <div class="cc-beat-row">
+            <span class="cc-beat-label">ク・リ・ス・マ・ス</span>
+            <div class="beat-row">
+              <span class="beat-da">ク</span><span class="beat-da">リ</span><span class="beat-da">ス</span><span class="beat-da">マ</span><span class="beat-da">ス</span>
+            </div>
+          </div>
+          <div class="cc-beat-row">
+            <span class="cc-beat-label">バ・ナ・ナ</span>
+            <div class="beat-row">
+              <span class="beat-da">バ</span><span class="beat-da">ナ</span><span class="beat-da">ナ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="concept-col" style="background:#FFFDE7;border:2px solid rgba(245,127,23,.15)">
+        <div class="cc-num" style="color:#FFB300">🇺🇸</div>
+        <div class="cc-title" style="color:#F57F17">English: Stress-Timed（強勢拍）</div>
+        <div class="cc-body">Stressed beats are <strong>evenly spaced</strong>. Unstressed syllables get squeezed into the gaps — shorter, weaker, faster.</div>
+        <div class="cc-beats">
+          <div class="cc-beat-row">
+            <span class="cc-beat-label">Christmas</span>
+            <div class="beat-row">${DUM}${da}</div>
+          </div>
+          <div class="cc-beat-row">
+            <span class="cc-beat-label">banana</span>
+            <div class="beat-row">${da}${DUM}${da}</div>
+          </div>
+          <div class="cc-beat-row">
+            <span class="cc-beat-label">beautiful</span>
+            <div class="beat-row">${DUM}${da}${da}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#FFF8E1;border-radius:12px;padding:12px 18px;flex-shrink:0">
+      <div style="font-size:clamp(11px,1.2vw,13px);font-weight:700;color:#E65100;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px">弱形（Weak Forms）— function words shrink in natural speech</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${[
+          {word:'a',strong:'/eɪ/',weak:'/ə/'},
+          {word:'the',strong:'/ðiː/',weak:'/ðə/'},
+          {word:'to',strong:'/tuː/',weak:'/tə/'},
+          {word:'and',strong:'/ænd/',weak:'/ən/'},
+          {word:'for',strong:'/fɔː/',weak:'/fə/'},
+          {word:'can',strong:'/kæn/',weak:'/kən/'},
+          {word:'of',strong:'/ɒv/',weak:'/əv/'},
+          {word:'have',strong:'/hæv/',weak:'/həv/'},
+        ].map(w=>`<div style="background:#fff;border:1px solid rgba(245,127,23,.25);border-radius:8px;padding:6px 12px;text-align:center;min-width:80px">
+          <div style="font-size:clamp(13px,1.5vw,17px);font-weight:900;color:#222">${w.word}</div>
+          <div style="font-size:clamp(9px,1vw,11px);color:#aaa;text-decoration:line-through">${w.strong}</div>
+          <div style="font-size:clamp(11px,1.2vw,14px);font-weight:700;color:#F57F17">${w.weak}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="concept-rule">💡 Key rule: <strong>Content words = strong (DUM)</strong>. Function words = weak (da) — shorten them to /ə/ and keep the beat flowing!</div>
+  </div></div>`;
+}
+
+function spotHTML(){
+  const boxes = SPOT.map((s,i)=>{
+    const id=`spot-${i}`;
+    return `<div class="spot-box">
+      <div class="spot-sent">${s.sent}</div>
+      <button class="spot-reveal-btn" onclick="toggleAns(this,'${id}')">▼ リズムを見る</button>
+      <div class="spot-ans" id="${id}">
+        <div class="beat-row" style="gap:6px;padding:4px 0">${s.pattern}</div>
+        <div class="spot-hint">${s.hint}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="slide spot-slide">
+  <div class="s-head" style="background:#F57F17">Spot It — Find the beat! <span class="badge">Student 🗣️</span></div>
+  <div class="s-body" style="flex-direction:column;gap:8px">
+    <div style="font-size:clamp(12px,1.4vw,14px);color:#555;flex-shrink:0">Read each sentence aloud and tap the stressed beats. Then press ▼ to check the da–DUM pattern.</div>
+    <div class="spot-grid">${boxes}</div>
+  </div></div>`;
+}
+
+function tryit1HTML(){
+  const cards = TRY1.map((t,i)=>`
+    <div class="tryit-card">
+      <div class="tryit-num">Sentence ${i+1}</div>
+      <div class="tryit-sent">${t.sent}</div>
+      <div class="tryit-note">${t.note}</div>
+    </div>`).join('');
+  return `<div class="slide tryit-slide">
+  <div class="s-head" style="background:#F57F17">Try It #1 — Tap & Say <span class="badge">Student 🗣️</span></div>
+  <div class="s-body" style="flex-direction:column;gap:8px">
+    <div style="font-size:clamp(12px,1.4vw,14px);color:#555;flex-shrink:0"><span class="dum" style="font-size:1em">CAPS</span> = stressed beat. Tap your hand on each stressed syllable as you say the sentence!</div>
+    <div class="tryit-grid">${cards}</div>
+  </div></div>`;
+}
+
+function tryit2HTML(){
+  const cards = TRY2.map((t,i)=>`
+    <div class="tryit-card">
+      <div class="tryit-num">Weak Forms ${i+1} — <span style="color:#F57F17">${t.weak}</span></div>
+      <div style="font-size:clamp(10px,1.1vw,12px);color:#aaa;margin-bottom:2px">① Say it slowly (strong forms):</div>
+      <div style="font-size:clamp(12px,1.4vw,16px);color:#999;line-height:1.5">${t.strong}</div>
+      <div style="font-size:clamp(10px,1.1vw,12px);color:#F57F17;margin:4px 0 2px">② Now naturally (weak forms):</div>
+      <div style="font-size:clamp(13px,1.55vw,18px);font-weight:700;color:#222;line-height:1.5">${t.natural}</div>
+      <div style="font-size:clamp(10px,1.1vw,12px);color:#888;font-style:italic;margin-top:2px">${t.tip}</div>
+    </div>`).join('');
+  return `<div class="slide tryit-slide">
+  <div class="s-head" style="background:#E65100">Try It #2 — Weak Forms（弱形）<span class="badge">Student 🗣️</span></div>
+  <div class="s-body" style="flex-direction:column;gap:8px">
+    <div style="font-size:clamp(12px,1.4vw,14px);color:#555;flex-shrink:0">Say ① slowly first, then ② at natural speed. The <em style="color:#F57F17">italic</em> words are weak forms — make them short and quiet!</div>
+    <div class="tryit-grid" style="overflow-y:auto">${cards}</div>
+  </div></div>`;
+}
+
+function roleplayHTML(){
+  const lines = ROLEPLAY.map(l=>`
+    <div class="rp-line ${l.role}">
+      <div class="rp-speaker">${l.label}</div>
+      <div class="rp-text">${l.text}</div>
+    </div>`).join('');
+  return `<div class="slide roleplay-slide">
+  <div class="s-head" style="background:#4a2f00">Role-Play 🎤 News Presenter! <span class="badge">Student leads · 8 min</span></div>
+  <div class="rp-body">
+    <div class="rp-scenario">📍 <strong>Scenario:</strong> You're a news presenter. The teacher reads each line first (flat rhythm) — then YOU say it with <span style="color:#FFB74D;font-weight:700">natural English rhythm</span>. Tap the desk on each stressed beat!</div>
+    <div class="rp-cols">
+      <div class="rp-col">
+        <div class="rp-col-label">Script</div>
+        ${lines}
+      </div>
+      <div class="rp-col">
+        <div class="rp-col-label">Rhythm Tips</div>
+        <div class="rp-tips-list">
+          <div>🥁 Your lines are <span style="background:rgba(245,127,23,.3);padding:1px 8px;border-radius:4px">highlighted</span></div>
+          <div>🟡 <span class="dum" style="font-size:1em">Amber words</span> = stressed beats — make them count!</div>
+          <div>👋 Tap the desk as you speak — one tap per beat</div>
+          <div>🔄 Round 2: Try without looking — can you remember the rhythm?</div>
+          <div>📰 Challenge: Improvise your own news headline with 3 stressed beats!</div>
+        </div>
+      </div>
+    </div>
+    <div class="rp-tip">🌟 Record yourself and listen back — does your rhythm match a native speaker?</div>
+  </div></div>`;
+}
+
+function buildHTML(){
+  return `<div class="slide build-slide">
+  <div class="s-head" style="background:#F57F17">Build It 🔨 — Write your own rhythm! <span class="badge">Student 🗣️ · 5 min</span></div>
+  <div class="build-body">
+    <div class="build-prompt">
+      <h2>Create 3 sentences with natural rhythm!</h2>
+      <p>Pick any topic. Say each sentence and tap the stressed beats. The teacher counts along!</p>
+    </div>
+    <div class="build-steps">
+      <div class="build-step" style="background:#FFF8E1;border-color:rgba(245,127,23,.3)">
+        <div class="build-step-num" style="color:#F57F17">①</div>
+        <div class="build-step-title" style="color:#E65100">Say it flat first</div>
+        <div class="build-step-ex">Like Japanese — every syllable equal. Notice how unnatural it sounds.</div>
+      </div>
+      <div class="build-step" style="background:#FFFDE7;border-color:rgba(245,127,23,.2)">
+        <div class="build-step-num" style="color:#FFB300">②</div>
+        <div class="build-step-title" style="color:#F57F17">Identify your beats</div>
+        <div class="build-step-ex">Which words are content words? Those get the stress. Mark them!</div>
+      </div>
+      <div class="build-step" style="background:#FFF8E1;border-color:rgba(245,127,23,.3)">
+        <div class="build-step-num" style="color:#E65100">③</div>
+        <div class="build-step-title" style="color:#E65100">Say it with rhythm</div>
+        <div class="build-step-ex">Make the stressed beats strong and squeeze the rest. Tap as you speak!</div>
+      </div>
+    </div>
+    <div style="font-size:clamp(13px,1.5vw,16px);color:#555;max-width:760px;width:100%;text-align:center">
+      💡 Topic ideas: describe your morning routine / talk about your favourite food / describe your city
+    </div>
+    <div class="teacher-note">📝 <strong>Teacher note:</strong> Count the beats out loud as the student speaks ("one… two… three…"). If the rhythm is off, tap a slow steady beat and have the student match it. Exaggerate at first — natural rhythm will follow.</div>
+  </div></div>`;
+}
+
+function quizHTML(){
+  const qs = QUIZ.map((q,i)=>{
+    const id=`qrev-${i}`;
+    const opts=q.opts.map(o=>`<div class="q-opt">${o}</div>`).join('');
+    const revealOpts=q.opts.map((o,ci)=>`<div class="qr-opt${ci===q.ans?' correct':''}">${o}</div>`).join('');
+    return `<div class="q-box">
+      <div class="q-num">Question ${i+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${opts}</div>
+      <button class="q-reveal-btn" onclick="toggleAns(this,'${id}')">▼ 答えを見る</button>
+      <div class="q-ans-reveal" id="${id}">
+        <div class="qr-opts">${revealOpts}</div>
+        <div class="qr-hint">💡 ${q.hint}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="slide quizq-slide">
+  <div class="s-head" style="background:#E65100">Mini Quiz <span class="badge">Think first! 🤔</span></div>
+  <div class="s-body" style="flex-direction:column;gap:8px;overflow-y:auto">
+    <div class="think-banner">🤔 Answer in your head first, then press "答えを見る" to check!</div>
+    <div class="q-grid" style="padding-bottom:8px">${qs}</div>
+  </div></div>`;
+}
+
+function summaryHTML(){
+  const cards=[
+    {icon:'🇯🇵🆚🇺🇸',title:'Two different systems',body:'Japanese = mora-timed (every beat equal). English = stress-timed (beats spaced evenly, weak syllables squeezed).',color:'#F57F17'},
+    {icon:'🥁',title:'The key rule',body:'Stressed syllables stay evenly spaced. Everything in between gets compressed — shorter, quieter, faster.',color:'#E65100'},
+    {icon:'💡',title:'The shortcut',body:'Focus on content words (nouns, verbs, adjectives). Stress those. Let the rest flow naturally in between.',color:'#FFB300'},
+  ];
+  const cardHTML=cards.map(c=>`
+    <div class="sum-card" style="background:${c.color}">
+      <div class="sum-card-icon">${c.icon}</div>
+      <div class="sum-card-title">${c.title}</div>
+      <div class="sum-card-body">${c.body}</div>
+    </div>`).join('');
+  return `<div class="slide summary-slide">
+  <div class="s-head" style="background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.09)">
+    <span style="color:#fff">Summary — English Rhythm（英語のリズム）</span>
+    <span class="badge" style="background:rgba(255,255,255,.1);color:#FFD54F">Lesson Complete 🎉</span>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px 26px">
+    <div class="sum-cards">${cardHTML}</div>
+    <div class="sum-foot">
+      <strong>Practice tip:</strong> Pick any English sentence you know. Say it flat (Japanese style), then say it again with strong beats on the content words. Feel the difference — <em>that's</em> the switch from mora-timed to stress-timed!
+    </div>
+  </div></div>`;
+}
+
+function freeConvHTML(){
+  return `<div class="slide freeconv-slide">
+  <div class="s-head" style="background:#1a0f00;border-top:2px solid rgba(245,127,23,.35)">
+    <span style="color:#FFB74D">💬 Free Conversation</span>
+    <span class="badge" style="background:rgba(245,127,23,.2);color:#FFB74D">8 min — Student leads!</span>
+  </div>
+  <div class="fc-body">
+    <div class="fc-badge">Today's Topic</div>
+    <div class="fc-topic">Daily Routines</div>
+    <div class="fc-questions">
+      <div class="fc-q">⏰ Walk me through your morning — from waking up to leaving the house. Focus on your rhythm!</div>
+      <div class="fc-q">🍽️ Describe what you had for dinner last night. Use at least 3 sentences with clear rhythm.</div>
+      <div class="fc-q">🗺️ Tell me about a place you visited recently — what did you do there?</div>
+    </div>
+    <p class="fc-note">Tap the desk as you speak — one tap per stressed beat. It might feel strange at first, but it trains the rhythm!</p>
+    <div class="fc-teacher">
+      <strong>Teacher guide:</strong> Tap lightly on the table as the student speaks — one tap per stressed beat. If the rhythm sounds flat or Japanese-style, gently exaggerate the stressed beats yourself and ask them to match. Don't over-correct; just model and let them feel it. End by asking: "Which sentence felt most natural?"
+    </div>
+  </div></div>`;
+}
+
+// ═══════════════════════════════════════════
+//  BUILD & NAV
+// ═══════════════════════════════════════════
+function build(){
+  const c=document.getElementById('slides');
+  let h=titleHTML()+warmupHTML()+conceptHTML()+spotHTML();
+  h+=tryit1HTML()+tryit2HTML()+roleplayHTML()+buildHTML();
+  h+=quizHTML()+summaryHTML()+freeConvHTML();
+  c.innerHTML=h;
+}
+
+function toggleAns(btn,id){
+  const el=document.getElementById(id);
+  const open=el.classList.toggle('open');
+  btn.textContent=open?'▲ 隠す':'▼ リズムを見る';
+  if(btn.textContent==='▲ 隠す'&&btn.innerText.includes('答え'))btn.textContent='▲ 隠す';
+}
+
+let cur=0,SL=[];
+function updateUI(){
+  SL=document.querySelectorAll('.slide');
+  SL.forEach((s,i)=>s.classList.toggle('active',i===cur));
+  document.getElementById('counter').textContent=`${cur+1} / ${SL.length}`;
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===SL.length-1;
+  document.getElementById('progress').style.width=`${((cur+1)/SL.length)*100}%`;
+}
+function move(d){if(cur+d>=0&&cur+d<SL.length){cur+=d;updateUI();}}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')move(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')move(-1);
+});
+build();updateUI();
+</script>
+</body>
+</html>
